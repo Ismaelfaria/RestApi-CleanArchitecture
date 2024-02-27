@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using RestApi_CleanArchitecture.App.IServices;
 using RestApi_CleanArchitecture.Domain;
 
@@ -31,37 +32,77 @@ namespace RestApi_CleanArchitecture.Infra.Controllers
         [HttpPost]
         public IActionResult Post(User user)
         {
-            _RepSave.Save(user);
+            try
+            {
+                var register = _RepSave.Save(user);
 
-            return Created();
-        } 
+                return Created();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { errors = ex.Errors.Select(e => e.ErrorMessage) });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro de criação por parte do servidor(Controller): {ex.Message}");
+            }
+
+        }
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, User user)
         {
-            _RepUpdate.Update(id, user);
+            try
+            {
+                _RepUpdate.Update(id, user);
 
-            return NoContent();
-        } 
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro de atuaização por parte do servidor(Controller): {ex.Message}");
+            }
+        }
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            _RepDelete.Delete(id);
+            try
+            {
+                _RepDelete.Delete(id);
 
-            return NoContent();
-        } 
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro de exclusão por parte do servidor(Controller): {ex.Message}");
+            }
+        }
         [HttpGet]
         public IActionResult GetAll()
         {
-            _RepGet.FindAll();
+            try
+            {
+                var registers = _RepGet.FindAll();
 
-            return Ok();
-        } 
+                return Ok(registers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(404, $"Erro de busca por parte do servidor(Controller): {ex.Message}");
+            }
+        }
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
-              _RepGetById.FindById(id);
+            try
+            {
+                var registerId = _RepGetById.FindById(id);
 
-            return Ok();
+                return Ok(registerId);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(404, $"Erro de busca por parte do servidor(Controller): {ex.Message}");
+            }
         }
     }
 }

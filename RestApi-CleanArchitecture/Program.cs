@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using RestApi_CleanArchitecture.App.IServices;
 using RestApi_CleanArchitecture.App.Repositories;
@@ -6,6 +7,8 @@ using RestApi_CleanArchitecture.App.UseCases.DeleteUser;
 using RestApi_CleanArchitecture.App.UseCases.GetById;
 using RestApi_CleanArchitecture.App.UseCases.GetUser;
 using RestApi_CleanArchitecture.App.UseCases.UpdateUser;
+using RestApi_CleanArchitecture.App.Validators;
+using RestApi_CleanArchitecture.Domain;
 using RestApi_CleanArchitecture.Infra.ContextoBd;
 using RestApi_CleanArchitecture.Infra.RepositoryImplementation;
 
@@ -36,9 +39,12 @@ builder.Services.AddScoped<IDeleteService, DeleteRegister>();
 builder.Services.AddScoped<IGetByIdService, GetByIdRegister>();
 builder.Services.AddScoped<IGetService, GetAllRegister>();
 
+//Dependency FluentValidator
+builder.Services.AddTransient<IValidator<User>, ValidatorUser>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+//Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
