@@ -1,6 +1,8 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using RestApi_CleanArchitecture.App.IServices;
+using RestApi_CleanArchitecture.App.Mapping.Model;
 using RestApi_CleanArchitecture.Domain;
 
 namespace RestApi_CleanArchitecture.Infra.Controllers
@@ -14,12 +16,14 @@ namespace RestApi_CleanArchitecture.Infra.Controllers
         private readonly IDeleteService _RepDelete;
         private readonly IGetService _RepGet;
         private readonly IGetByIdService _RepGetById;
+        private readonly IMapper _mapper;
         public ControllerUsers(
             ICreateService RepSave,
             IUpdateService RepUpdate,
             IDeleteService RepDelete,
             IGetService RepGet,
-            IGetByIdService RepGetById
+            IGetByIdService RepGetById,
+            IMapper mapper
             )
         {
             _RepSave = RepSave;
@@ -27,16 +31,19 @@ namespace RestApi_CleanArchitecture.Infra.Controllers
             _RepDelete = RepDelete;
             _RepGet = RepGet;
             _RepGetById = RepGetById;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public IActionResult Post(User user)
+        public IActionResult Post(InputModelUser user)
         {
             try
             {
-                var register = _RepSave.Save(user);
+                var mapp = _mapper.Map<User>(user);
 
-                return Created();
+                var register = _RepSave.Save(mapp);
+
+                return CreatedAtAction(nameof(GetById), new { id = mapp.Id }, mapp);
             }
             catch (ValidationException ex)
             {
@@ -83,7 +90,9 @@ namespace RestApi_CleanArchitecture.Infra.Controllers
             {
                 var registers = _RepGet.FindAll();
 
-                return Ok(registers);
+                var mapp = _mapper.Map<List<ViewModelUser>>(registers);
+
+                return Ok(mapp);
             }
             catch (Exception ex)
             {

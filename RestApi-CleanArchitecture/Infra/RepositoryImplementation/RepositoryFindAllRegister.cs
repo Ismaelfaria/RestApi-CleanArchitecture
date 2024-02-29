@@ -1,4 +1,6 @@
-﻿using RestApi_CleanArchitecture.App.Repositories;
+﻿using AutoMapper;
+using RestApi_CleanArchitecture.App.Mapping.Model;
+using RestApi_CleanArchitecture.App.Repositories;
 using RestApi_CleanArchitecture.Domain;
 using RestApi_CleanArchitecture.Infra.ContextoBd;
 

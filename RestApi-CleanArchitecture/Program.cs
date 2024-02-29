@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using RestApi_CleanArchitecture.App.IServices;
+using RestApi_CleanArchitecture.App.Mapping.ProfilerUser;
 using RestApi_CleanArchitecture.App.Repositories;
 using RestApi_CleanArchitecture.App.UseCases.CreateUser;
 using RestApi_CleanArchitecture.App.UseCases.DeleteUser;
@@ -41,6 +42,9 @@ builder.Services.AddScoped<IGetService, GetAllRegister>();
 
 //Dependency FluentValidator
 builder.Services.AddTransient<IValidator<User>, ValidatorUser>();
+
+//Dependency Automapper
+builder.Services.AddAutoMapper(typeof(UserProfile));
 
 var app = builder.Build();
 
